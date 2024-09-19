@@ -1,195 +1,120 @@
+	Тестирование API												
+	Суть задания												
+	Составьте тест кейсы для проверки api описанного ниже микросервиса. Автоматизируйте написанные тест кейсы, где необходимо проверить результат (Все тесты должны быть пройдены)												
+													
+	Описание среды												
+													
+	Мы имеем микросервис, содержащий 3 ручки:												
+													
+	Создание объявления												
+	Получение объявления по его идентификатору												
+	Получение всех объявлений по идентификатору продавца												
+	Host микросервиса - https://qa-internship.avito.com												
+	Postman коллекция												
+													
+	Описание сервиса:												
+													
+	Сервис умеет хранить данные объявлений, сохранять и получать все объявления пользователя. Каждое созданное объявление имеет уникальный идентификатор, остальные поля могут быть повторяемыми.												
+													
+	Будьте аккуратны с sellerID – постарайтесь создать уникальный id (в диапазоне 111111-999999) – возможны пересечения с другими пользователями.												
+													
+													
+ID	Название тест-кейса	Описание	Предусловия	Шаги выполнения	Фактический результат	Ожидаемый результат	Статус	Серьезность	Приоритет	Автор	Дата создания	Комментарии	
+ТС001	Успешное создание объекта	Проверка успешного создания объявления.	Убедитесь, что микросервис доступен и работает.	"1. Отправить POST-запрос на https://qa-internship.avito.com/api/1/item  с телом запроса:
 {
-    "info": {
-        "name": "API Tests",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
-    "item": [
-        {
-            "name": "Create Ad",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 200\", function () {",
-                            "    pm.response.to.have.status(200);",
-                            "});",
-                            "",
-                            "pm.test(\"Response contains ad ID\", function () {",
-                            "    var jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.id).to.be.a('string');",
-                            "    pm.environment.set(\"adId\", jsonData.id);",
-                            "});"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
-            "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"name\": \"Телефон\",\n    \"price\": 85566,\n    \"sellerId\": 291295,\n    \"statistics\": {\n        \"contacts\": 32,\n        \"like\": 35,\n        \"viewCount\": 14\n    }\n}",
-                    "options": {
-                        "raw": {
-                            "language": "json"
-                        }
-                    }
-                },
-                "url": {
-                    "raw": "https://qa-internship.avito.com/api/1/item",
-                    "protocol": "https",
-                    "host": [
-                        "qa-internship",
-                        "avito",
-                        "com"
-                    ],
-                    "path": [
-                        "api",
-                        "1",
-                        "item"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Ad by ID",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 200\", function () {",
-                            "    pm.response.to.have.status(200);",
-                            "});",
-                            "",
-                            "pm.test(\"Response contains correct ad data\", function () {",
-                            "    var jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.name).to.eql(\"Телефон\");",
-                            "    pm.expect(jsonData.price).to.eql(85566);",
-                            "    pm.expect(jsonData.sellerId).to.eql(291295);",
-                            "    pm.expect(jsonData.statistics.contacts).to.eql(32);",
-                            "    pm.expect(jsonData.statistics.like).to.eql(35);",
-                            "    pm.expect(jsonData.statistics.viewCount).to.eql(14);",
-                            "});"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "https://qa-internship.avito.com/api/1/item/{{adId}}",
-                    "protocol": "https",
-                    "host": [
-                        "qa-internship",
-                        "avito",
-                        "com"
-                    ],
-                    "path": [
-                        "api",
-                        "1",
-                        "item",
-                        "{{adId}}"
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Ads by Seller ID",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 200\", function () {",
-                            "    pm.response.to.have.status(200);",
-                            "});",
-                            "",
-                            "pm.test(\"Response contains list of ads\", function () {",
-                            "    var jsonData = pm.response.json();",
-                            "    pm.expect(jsonData).to.be.an('array');",
-                            "    pm.expect(jsonData.length).to.be.above(0);",
-                            "    jsonData.forEach(function(ad) {",
-                            "        pm.expect(ad.sellerId).to.eql(291295);",
-                            "    });",
-                            "});"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "https://qa-internship.avito.com/api/1/291295/item",
-                    "protocol": "https",
-                    "host": [
-                        "qa-internship",
-                        "avito",
-                        "com"
-                    ],
-                    "path": [
-                        "api",
-                        "1",
-                        "item"
-                    ],
-                    "query": [
-                        {
-                            "key": "sellerId",
-                            "value": "291295"
-                        }
-                    ]
-                }
-            },
-            "response": []
-        },
-        {
-            "name": "Get Ad with Non-Existent ID",
-            "event": [
-                {
-                    "listen": "test",
-                    "script": {
-                        "exec": [
-                            "pm.test(\"Status code is 404\", function () {",
-                            "    pm.response.to.have.status(404);",
-                            "});",
-                            "",
-                            "pm.test(\"Response contains error message\", function () {",
-                            "    var jsonData = pm.response.json();",
-                            "    pm.expect(jsonData.result.message).to.eql(\"item 42479491-30b4-4ffa-ae98-b08c8395jhd-5 not found\");",
-                            "});"
-                        ],
-                        "type": "text/javascript"
-                    }
-                }
-            ],
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "https://qa-internship.avito.com/api/1/item/42479491-30b4-4ffa-ae98-b08c8395jhd-5",
-                    "protocol": "https",
-                    "host": [
-                        "qa-internship",
-                        "avito",
-                        "com"
-                    ],
-                    "path": [
-                        "api",
-                        "1",
-                        "item",
-                        "42479491-30b4-4ffa-ae98-b08c8395jhd-5"
-                    ]
-                }
-            },
-            "response": []
+        ""name"": ""Телефон"",
+        ""price"": 85566,
+        ""sellerId"": 291295,
+        ""statistics"": {
+            ""contacts"": 32,
+            ""like"": 35,
+            ""viewCount"": 14
         }
-    ]
+    }
+2. Проверить, что статус-код ответа 200ОК.
+3. Проверить, что в теле ответа содержится уникальный идентификатор объявления.
+
+{
+""id"": ""unique-ad-id""
 }
+4. Сохранить запрос"	Объявление успешно создано, возвращен уникальный идентификатор.	Объявление успешно создано, возвращен уникальный идентификатор.	Passed			Шведчикова А.В.	18.09.2024		
+ТС002	Создание объявления с дублирующимся идентификатором продавца	Проверка создания объявления с уже существующим идентификатором продавца.	Убедитесь, что существует объявление с sellerID 291295.	"1. Отправить POST-запрос на https://qa-internship.avito.com/api/1/item  с телом запроса:
+{
+        ""name"": ""Нофелет"",
+        ""price"": 66558,
+        ""sellerId"": 291295,
+        ""statistics"": {
+            ""contacts"": 32,
+            ""like"": 35,
+            ""viewCount"": 14
+        }
+    }
+2. Проверить, что статус-код ответа 200ОК.
+3. Проверить, что в теле ответа содержится уникальный идентификатор объявления.
+
+{
+""adID"": ""another-unique-ad-id""
+}
+4. Сохранить запрос"	Объявление успешно создано, возвращен уникальный идентификатор.	Объявление успешно создано, возвращен уникальный идентификатор.	Passed			Шведчикова А.В.	18.09.2024		
+ТС003	 Успешное получение объявления по идентификатору	Проверка успешного получения объявления по его идентификатору.	 Убедитесь, что существует объявление с adID "unique-ad-id".	"1. Отправить GET-запрос на https://qa-internship.avito.com/api/1/item/:id.  Указать Path Variables id :  ""unique-ad-id""
+2.Проверить, что статус-код ответа 200OK.
+3. Проверить, что в теле ответа содержатся корректные данные объявления
+{
+        ""name"": ""Телефон"",
+        ""price"": 85566,
+        ""sellerId"": 291295,
+        ""statistics"": {
+            ""contacts"": 32,
+            ""like"": 35,
+            ""viewCount"": 14
+        }
+    }"	Объявление успешно получено, данные корректны.	Объявление успешно получено, данные корректны.	Passed			Шведчикова А.В.	18.09.2024		
+ТС004	Получение объявления с несуществующим идентификатором	Проверка получения объявления с несуществующим идентификатором.	Убедитесь, что объявления с adID "non-existent-ad-id" не существует.	"1. Отправить GET-запрос на https://qa-internship.avito.com/api/1/item/:id.  Указать Path Variables id : 42479491-30b4-4ffa-ae98-b08c8395jhd-5
+2. Проверить, что статус-код ответа 404.
+3. Проверить, что в теле ответа содержится сообщение об ошибке.
+
+""result"": {
+        ""message"": ""item 42479491-30b4-4ffa-ae98-b08c8395jhd-5 not found"",
+        ""messages"": null
+    },
+    ""status"": ""404"""		Объявление не найдено, возвращен статус-код 404 и сообщение об ошибке.	Passed			Шведчикова А.В.	18.09.2024		
+ТС005	Успешное получение всех объявлений по идентификатору продавца	Проверка успешного получения всех объявлений по идентификатору продавца.	Убедитесь, что существует несколько объявлений с sellerID 291295.	"1. Отправить GET-запрос на https://qa-internship.avito.com/api/1/:sellerID/item указать path Variables sellerID 291295
+2. Проверить, что статус-код ответа 200OK.
+3. Проверить, что в теле ответа содержится список объявлений данного продавца.
+[
+    {
+        ""createdAt"": ""2024-09-18 23:56:02.796664 +0300 +0300"",
+        ""id"": ""cacd874a-c789-4981-8dd2-571d1c8d2ee9"",
+        ""name"": ""Телефон"",
+        ""price"": 85566,
+        ""sellerId"": 291295,
+        ""statistics"": {
+            ""contacts"": 32,
+            ""likes"": 0,
+            ""viewCount"": 14
+        }
+    },
+    {
+        ""createdAt"": ""2024-09-18 23:56:19.433364 +0300 +0300"",
+        ""id"": ""169f43cc-5ded-4d0e-8b6b-c79bf6ca15da"",
+        ""name"": ""Нофелет"",
+        ""price"": 66558,
+        ""sellerId"": 291295,
+        ""statistics"": {
+            ""contacts"": 32,
+            ""likes"": 0,
+            ""viewCount"": 14
+        }
+    }
+]"	Все объявления продавца успешно получены, данные корректны.	Все объявления продавца успешно получены, данные корректны.	Passed			Шведчикова А.В.	18.09.2024		
+ТС006	Получение объявлений с несуществующим идентификатором продавца	Проверка получения объявлений с несуществующим идентификатором продавца.	 Убедитесь, что объявления с sellerID 951229 не существует.	"1. Отправить GET-запрос на https://qa-internship.avito.com/api/1/item/:?sellerId=951229
+2. Проверить, что статус-код ответа 404.
+3. Проверить, что в теле ответа содержится сообщение об ошибке.
+
+{
+    ""result"": {
+        ""message"": ""item : not found"",
+        ""messages"": null
+    },
+    ""status"": ""404""
+}"	Объявления не найдены, возвращен статус-код 404 и сообщение об ошибке.	Объявления не найдены, возвращен статус-код 404 и сообщение об ошибке.	Passed			Шведчикова А.В.	18.09.2024		
